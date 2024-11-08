@@ -1,4 +1,5 @@
 \import Data.Maybe
+\import hw07
 \import lect07 (Decide)
 \import lect09
 
@@ -9,7 +10,7 @@
 
 -- 2. Определите отношение многошаговой редукции на Term
 
-\func Red {V : \Set} (t s : Term V) : \Type => {?}
+\func Red {V : \Set} (t s : Term V) : \Type => ReflTransClosure Red1 t s
 
 -- 3. Стратегия редукции -- это функция, которая каждому терму сопоставляет либо некоторый терм,
 --    к которому он редуцируется за 1 шаг, либо доказательство, что таких термов нет
@@ -19,14 +20,14 @@
 
 -- 4. Докажите, что подтермы достижимого терма достижимы
 
-\func appAccLeft {V : \Set} {t s : Term V} (a : Acc Red1 (app t s)) : Acc Red1 t
-  => {?}
+\func appAccLeft {V : \Set} {t s : Term V} (a : Acc Red1 (app t s)) : Acc Red1 t \elim a
+  | acc f => acc (\lam t' r => appAccLeft (f (app t' s) (red-left r idp)))
 
-\func appAccRight {V : \Set} {t s : Term V} (a : Acc Red1 (app t s)) : Acc Red1 s
-  => {?}
+\func appAccRight {V : \Set} {t s : Term V} (a : Acc Red1 (app t s)) : Acc Red1 s \elim a
+  | acc f => acc (\lam s' r => appAccRight (f (app t s') (red-right idp r)))
 
-\func subLamAcc {V : \Set} {t : Term (Maybe V)} (a : Acc Red1 (lam t)) : Acc Red1 t
-  => {?}
+\func subLamAcc {V : \Set} {t : Term (Maybe V)} (a : Acc Red1 (lam t)) : Acc Red1 t\elim a
+  | acc f => acc (\lam t' r => subLamAcc (f (lam t') (red-lam r)))
 
 -- 5. Докажите следующую обобщенную лемму о подстановке и выведите из нее обычную версию:
 --    если Г, x : A |- b : B и Г |- a : A, то Г |- b[a/x] : B
